@@ -6,7 +6,7 @@ describe('Categories Model', () => {
 
   beforeEach(() => {
     categories = new Categories();
-  })
+  });
 
   // How might we repeat this to check on types?
   it('sanitize() returns undefined with missing requirements', () => {
@@ -44,12 +44,32 @@ describe('Categories Model', () => {
       });
   });
 
-  it('can delete() a category' () => {
+  it('can delete() a category', () => {
     let obj = { name: 'Test Category' };
-    categories.delete(obj)
+    categories.create(obj)
       .then(record => {
-        //finish later
+        return categories.delete(record._id)
+          .then(category => {
+            expect(categories.get(record._id).name).toBeFalsy();
+          });
       })
-  })
+      .catch(err => console.error);
+  });
 
+  it('can update() a category', () => {
+    let obj = { name: 'Test Category', zoo: true };
+    categories.create(obj)
+      .then(record => {
+        categories.update(record.id, { name: 'The New Test Category', id: 83 })
+          .then(category => {
+            categories.get(83)
+              .then(changedID => {
+                expect(changedID.name).toEqual('The New Test Category');
+              })
+              .catch(err => console.error);
+          });
+      })
+      .catch(err => console.error);
+  });
+  
 });

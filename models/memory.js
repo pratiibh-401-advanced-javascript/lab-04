@@ -34,18 +34,14 @@ class Model {
   sanitize(entry) {
 
     let valid = true;
-    let record = {};
+    let record = entry;
 
     Object.keys(this.schema).forEach(field => {
-      if (this.schema[field].required) {
-        if (entry[field]) {
-          record[field] = entry[field];
-        } else {
-          valid = false;
-        }
+      if (this.schema[field].required && !record[field]) {
+        valid = false;
       }
-      else {
-        record[field] = entry[field];
+      if(record[field] && this.schema[field].type && !(typeof record[field] === this.schema[field].type)) {
+        valid = false;
       }
     });
 
